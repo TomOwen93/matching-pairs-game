@@ -1,0 +1,15 @@
+.grid-buttons {
+  font: 200px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-left: 500px;
+  margin-right: 500px;
+}
+
+.grid-button-single {
+  font-size: 100px;
+}
+
+body {
+  background-color: whitesmoke;
+}
