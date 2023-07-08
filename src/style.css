@@ -1,0 +1,74 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+
+.grid-buttons {
+  font: 200px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 20px;
+  justify-items: center;
+  gap: 10px;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+hr {
+  width: auto;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+}
+
+.grid-button-single {
+  font-size: 80px;
+  width: 100px;
+  height: 100px;
+}
+
+.main-section {
+  display: flex;
+  flex-direction: column;
+  outline: 5px solid green;
+  align-items: center;
+  margin: 50px;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+body {
+  background-color: whitesmoke;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  font-family: "Roboto", sans-serif;
+  font: bold;
+}
+
+.below-grid {
+  outline: 2px green solid;
+  border-radius: 5px;
+  align-items: center;
+  display: flex;
+  font-size: 20px;
+  flex-direction: column;
+  width: 400px;
+  padding: 5px;
+  margin: 10px;
+}
+
+.chosen-cards {
+  display: flex;
+  font-size: 40px;
+
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+
+.chosen-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
