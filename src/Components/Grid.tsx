@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { GridButton } from "./GridButton";
-import { randomEmoji } from "../utils/RandomEmoji";
+import { randomSortEmoji } from "../utils/SortRandomEmoji";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { randomEmoji } from "../utils/RandomEmoji";
 
 interface ButtonType {
   id: number;
@@ -10,25 +11,7 @@ interface ButtonType {
   score: number;
 }
 
-const emojis = [
-  "🌕",
-  "⛏",
-  "☄",
-  "📉",
-  "☘",
-  "👘",
-  "🙍",
-  "😋",
-  "🌕",
-  "⛏",
-  "☄",
-  "📉",
-  "☘",
-  "👘",
-  "🙍",
-  "😋",
-];
-const randomisedGrid = randomEmoji(emojis);
+const randomisedGrid = randomSortEmoji(randomEmoji());
 const gridObject = randomisedGrid.map((emoji, index) => {
   return {
     id: index,
@@ -83,7 +66,7 @@ export function Grid(): JSX.Element {
 
   const handleReset = () => {
     setGridcards(
-      randomEmoji(emojis).map((emoji, index) => {
+      randomSortEmoji(randomEmoji()).map((emoji, index) => {
         return {
           id: index,
           isVisible: false,
