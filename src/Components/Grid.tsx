@@ -81,6 +81,22 @@ export function Grid(): JSX.Element {
     );
   };
 
+  const handleReset = () => {
+    setGridcards(
+      randomEmoji(emojis).map((emoji, index) => {
+        return {
+          id: index,
+          isVisible: false,
+          emoji: emoji,
+          score: 1,
+        };
+      })
+    );
+    setPlayerScore(0);
+    setTurn(0);
+    setRecentCards([]);
+  };
+
   const handleTakeTurn = (button: ButtonType) => {
     if (recentCards.length < 2) {
       setRecentCards([...recentCards, button]);
@@ -106,16 +122,25 @@ export function Grid(): JSX.Element {
           ))}
         </div>
         <div className="below-grid">
-          <p ref={animationParent}>Chosen cards: </p>{" "}
-          <span className="chosen-cards">
-            <ul ref={animationParent} className="chosen-list">
-              {recentCards.map((card, index) => (
-                <li key={index}>{card.emoji}</li>
-              ))}
-            </ul>
-          </span>
-          <p>Turn: {turn}</p>
-          <p>Your current score is: {playerScore}</p>
+          {playerScore < 8 && (
+            <div>
+              <p ref={animationParent}>Chosen cards: </p>{" "}
+              <span className="chosen-cards">
+                <ul ref={animationParent} className="chosen-list">
+                  {recentCards.map((card, index) => (
+                    <li key={index}>{card.emoji}</li>
+                  ))}
+                </ul>
+              </span>
+              <p>Turn: {turn}</p>
+              <p>Your current score is: {playerScore}</p>
+            </div>
+          )}
+          {playerScore == 8 && (
+            <div className="reset-button">
+              <p>You Win!</p> <button onClick={handleReset}>Reset</button>
+            </div>
+          )}
         </div>
       </div>
     </div>
