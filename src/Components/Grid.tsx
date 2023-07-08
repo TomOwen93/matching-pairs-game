@@ -136,7 +136,7 @@ export function Grid(): JSX.Element {
               <p>Your current score is: {playerScore}</p>
             </div>
           )}
-          {playerScore == 8 && (
+          {playerScore === 8 && (
             <div className="reset-button">
               <p>You Win!</p> <button onClick={handleReset}>Reset</button>
             </div>
