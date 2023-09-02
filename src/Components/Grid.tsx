@@ -1,9 +1,11 @@
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { GridCard } from "./GridCard";
 import { randomSortEmoji } from "../utils/SortRandomEmoji";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { randomEmoji } from "../utils/RandomEmoji";
 import { Grid, GridItem, Heading, Card, Button } from "@chakra-ui/react";
+import { isPartiallyEmittedExpression } from "typescript";
+import { createReadStream } from "fs";
 
 export interface Card {
   id: number;
@@ -13,7 +15,13 @@ export interface Card {
 }
 
 interface GameActions {
-  type: "update_score" | "reset" | "take_turn" | "flip_tile";
+  type:
+    | "reset_cards"
+    | "reset_state"
+    | "take_turn"
+    | "flip_tile"
+    | "match"
+    | "reset_recent";
   payload?: any;
 }
 
@@ -46,27 +54,35 @@ function gameReducer(state: GameState, action: GameActions) {
   let updatedTurn = state.turn;
   let updatedGridCards = state.gridCards;
 
-  console.log(state.recentCards.length);
   switch (action.type) {
-    case "update_score":
+    case "match":
       return { ...state, playerScore: state.playerScore + 1 };
 
-    case "take_turn":
-      if (state.recentCards.length < 2) {
-        updatedRecentCards = [...state.recentCards, action.payload.card];
-      } else {
-        updatedRecentCards = [];
-      }
-      updatedTurn = state.turn === 2 ? 0 : state.turn + 1;
+    case "reset_cards":
+      updatedRecentCards = [];
+      return { ...state, recentCards: updatedRecentCards };
 
+    case "take_turn":
+      updatedRecentCards = [...state.recentCards, action.payload.card];
+      updatedTurn = state.turn === 2 ? 0 : state.turn + 1;
       return { ...state, recentCards: updatedRecentCards, turn: updatedTurn };
 
-    case "flip_tile":
+    case "reset_recent":
       updatedGridCards = state.gridCards.map((card) => {
         if (
           card.id === state.recentCards[0].id ||
           card.id === state.recentCards[1].id
         ) {
+          return { ...card, isVisible: false, score: 1 };
+        } else {
+          return card;
+        }
+      });
+      return { ...state, gridCards: updatedGridCards };
+
+    case "flip_tile":
+      updatedGridCards = state.gridCards.map((card) => {
+        if (card.id === action.payload.card.id) {
           return {
             ...card,
             score: action.payload.score,
@@ -76,10 +92,9 @@ function gameReducer(state: GameState, action: GameActions) {
           return card;
         }
       });
+      return { ...state, gridCards: updatedGridCards };
 
-      return { ...state, gridcards: updatedGridCards };
-
-    case "reset":
+    case "reset_state":
       return initialState;
     default:
       return state;
@@ -90,25 +105,28 @@ export function GridComp(): JSX.Element {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   const [animationParent] = useAutoAnimate();
 
-  const handleCheckMatch = () => {
-    console.log("recentcards length: " + state.recentCards.length);
+  const handleCheckMatch = (card: Card) => {
+    dispatch({ type: "take_turn", payload: { card } });
+    dispatch({
+      type: "flip_tile",
+      payload: { visibility: true, score: 0, card },
+    });
+
     if (state.recentCards.length === 2) {
       if (
         state.recentCards[0].emoji === state.recentCards[1].emoji &&
         state.recentCards[0].id !== state.recentCards[1].id
       ) {
-        dispatch({
-          type: "flip_tile",
-          payload: { visibility: true, score: 0 },
-        });
-        dispatch({ type: "update_score" });
-      } else {
+        dispatch({ type: "match" });
       }
-    } else {
-      // dispatch({ type: "flip_tile", payload: { visibility: true, score: 1 } });
+      dispatch({
+        type: "reset_recent",
+      });
+      dispatch({ type: "reset_cards" });
     }
   };
 
+  console.log(state.gridCards);
   return (
     <>
       <Heading textAlign={"center"}> Try to match 2 tiles </Heading>
@@ -149,7 +167,9 @@ export function GridComp(): JSX.Element {
           {state.playerScore === 8 && (
             <div className="reset-button">
               <p>You Win!</p>{" "}
-              <Button onClick={() => dispatch({ type: "reset" })}>Reset</Button>
+              <Button onClick={() => dispatch({ type: "reset_state" })}>
+                Reset
+              </Button>
             </div>
           )}
         </div>

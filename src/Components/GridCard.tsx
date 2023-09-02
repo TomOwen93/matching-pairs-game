@@ -17,7 +17,6 @@ export function GridCard({
   dispatch,
 }: GridCardProps): JSX.Element {
   const handleClick = () => {
-    dispatch({ type: "take_turn", payload: { card: card } });
     handleMatch(card);
   };
 
