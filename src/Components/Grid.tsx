@@ -3,7 +3,7 @@ import { GridCard } from "./GridCard";
 import { randomSortEmoji } from "../utils/SortRandomEmoji";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { randomEmoji } from "../utils/RandomEmoji";
-import { Grid, GridItem, Heading } from "@chakra-ui/react";
+import { Grid, GridItem, Heading, Card, Button } from "@chakra-ui/react";
 
 export interface Card {
   id: number;
@@ -46,6 +46,7 @@ function gameReducer(state: GameState, action: GameActions) {
   let updatedTurn = state.turn;
   let updatedGridCards = state.gridCards;
 
+  console.log(state.recentCards.length);
   switch (action.type) {
     case "update_score":
       return { ...state, playerScore: state.playerScore + 1 };
@@ -76,8 +77,6 @@ function gameReducer(state: GameState, action: GameActions) {
         }
       });
 
-      console.log(updatedGridCards);
-
       return { ...state, gridcards: updatedGridCards };
 
     case "reset":
@@ -91,7 +90,8 @@ export function GridComp(): JSX.Element {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   const [animationParent] = useAutoAnimate();
 
-  const handleCheckMatch = (button: Card) => {
+  const handleCheckMatch = () => {
+    console.log("recentcards length: " + state.recentCards.length);
     if (state.recentCards.length === 2) {
       if (
         state.recentCards[0].emoji === state.recentCards[1].emoji &&
@@ -103,18 +103,10 @@ export function GridComp(): JSX.Element {
         });
         dispatch({ type: "update_score" });
       } else {
-        dispatch({
-          type: "flip_tile",
-          payload: { visibility: false, score: 1 },
-        });
       }
     } else {
-      dispatch({ type: "flip_tile", payload: { visibility: true, score: 1 } });
+      // dispatch({ type: "flip_tile", payload: { visibility: true, score: 1 } });
     }
-  };
-
-  const handleReset = () => {
-    dispatch({ type: "reset" });
   };
 
   return (
@@ -141,7 +133,7 @@ export function GridComp(): JSX.Element {
 
         <div className="below-grid">
           {state.playerScore < 8 && (
-            <div>
+            <Card>
               <p ref={animationParent}>Chosen cards: </p>{" "}
               <span className="chosen-cards">
                 <ul ref={animationParent} className="chosen-list">
@@ -152,11 +144,12 @@ export function GridComp(): JSX.Element {
               </span>
               <p>Turn: {state.turn}</p>
               <p>Your current score is: {state.playerScore}</p>
-            </div>
+            </Card>
           )}
           {state.playerScore === 8 && (
             <div className="reset-button">
-              <p>You Win!</p> <button onClick={handleReset}>Reset</button>
+              <p>You Win!</p>{" "}
+              <Button onClick={() => dispatch({ type: "reset" })}>Reset</Button>
             </div>
           )}
         </div>
