@@ -63,8 +63,8 @@ function gameReducer(state: GameState, action: GameActions) {
     case "flip_tile":
       updatedGridCards = state.gridCards.map((card) => {
         if (
-          card.id === state.gridCards[0].id ||
-          card.id === state.gridCards[1].id
+          card.id === state.recentCards[0].id ||
+          card.id === state.recentCards[1].id
         ) {
           return {
             ...card,
@@ -75,6 +75,8 @@ function gameReducer(state: GameState, action: GameActions) {
           return card;
         }
       });
+
+      console.log(updatedGridCards);
 
       return { ...state, gridcards: updatedGridCards };
 
